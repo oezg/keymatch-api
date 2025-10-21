@@ -1,19 +1,15 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/oezg/keymatch-api/db"
+	"github.com/oezg/keymatch-api/routes"
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default()
 
-	server.GET("/hello", helloWorld)
-
+	routes.RegisterRoutes(server)
 	server.Run(":3434")
-}
-
-func helloWorld(context *gin.Context) {
-	context.JSON(http.StatusOK, gin.H{"message": "Hello World!"})
 }

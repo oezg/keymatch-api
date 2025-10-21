@@ -10,7 +10,7 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	DB, err = sql.Open("sqlite3", "api.db")
+	DB, err = sql.Open("sqlite3", "keymatch.db")
 	if err != nil {
 		panic("Could not conect to database")
 	}
@@ -22,49 +22,33 @@ func InitDB() {
 }
 
 func createTables() {
-	createKeymatchesTable := `
-	CREATE TABLE IF NOT EXISTS keymatches (
+	createKeymatchTable := `
+	CREATE TABLE IF NOT EXISTS keymatch (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		keyword TEXT NOT NULL,
 		domain TEXT NOT NULL,
 		synonym_id INTEGER,
-		
+		UNIQUE(keyword, domain),
+		FOREIGN KEY (synonym_id) REFERENCES synonyms(id)
 	)
 	`
 
-	_, err := DB.Exec(createUsersTable)
+	_, err := DB.Exec(createKeymatchTable)
 	if err != nil {
 		panic("Could not create users table.")
 	}
 
-	createEventsTable := `
-	CREATE TABLE IF NOT EXISTS events (
+	createSynonymTable := `
+	CREATE TABLE IF NOT EXISTS synonym (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
-		description TEXT NOT NULL,
-		location TEXT NOT NULL,
-		dateTime  DATETIME NOT NULL,
-		user_id INTEGER,
-		FOREIGN KEY (user_id) REFERENCES users(id)
+		domain TEXT NOT NULL,
+		url TEXT NOT NULL,
+		caption TEXT NOT NULL
 	)
 	`
 
-	_, err = DB.Exec(createEventsTable)
+	_, err = DB.Exec(createSynonymTable)
 	if err != nil {
 		panic("Could not create events table.")
-	}
-
-	createRegistrationsTable := `
-	CREATE TABLE IF NOT EXISTS registrations (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		event_id INTEGER NOT NULL,
-		user_id INTEGER NOT NULL,
-		FOREIGN KEY (event_id) REFERENCES events(id),
-		FOREIGN KEY (user_id) REFERENCES users(id)
-	)
-	`
-	_, err = DB.Exec(createRegistrationsTable)
-	if err != nil {
-		panic("Could not create registrations table.")
 	}
 }

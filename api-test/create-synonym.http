@@ -1,0 +1,8 @@
+POST http://localhost:3434/synonyms
+Content-Type: application/json
+
+{
+  "domain": "swr",
+  "url": "https://clojure.org/",
+  "caption": "Clojure is a robust, practical, and "
+}
